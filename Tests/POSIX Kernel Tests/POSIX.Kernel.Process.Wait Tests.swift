@@ -22,7 +22,7 @@
     }
 
     extension Kernel.Process.Wait.Test {
-        @Suite struct Integration {}
+        @Suite(.serialized) struct Integration {}
     }
 
     // MARK: - Selector Tests
