@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-public import POSIX_Primitives
+@_exported import POSIX_Primitives
 
 /// Re-export Kernel namespace from primitives for use within POSIX module.
 public typealias Kernel = Kernel_Primitives.Kernel
