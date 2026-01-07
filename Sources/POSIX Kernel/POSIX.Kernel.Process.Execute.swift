@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     internal import Darwin

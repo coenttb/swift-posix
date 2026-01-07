@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     public import Darwin
@@ -43,7 +43,7 @@ extension POSIX.Kernel.Process.Group {
 
 extension Tagged where Tag == POSIX.Kernel.Process.Group, RawValue == pid_t {
     /// The current process group.
-    @inlinable
+
     public static var current: Self { Self(getpgrp()) }
 }
 
@@ -116,7 +116,7 @@ extension POSIX.Kernel.Process.Group {
     /// // Move specific process to new group with that process as leader
     /// try POSIX.Kernel.Process.Group.set(.id(childPid), to: .same)
     /// ```
-    @inlinable
+
     public static func set(
         _ process: Process,
         to target: Target
@@ -162,7 +162,7 @@ extension POSIX.Kernel.Process.Group {
     /// // Get process group of another process
     /// let pgid = try POSIX.Kernel.Process.Group.id(of: childPid)
     /// ```
-    @inlinable
+
     public static func id(of pid: Kernel.Process.ID) throws(POSIX.Kernel.Process.Error) -> ID {
         let result = getpgid(pid.rawValue)
         guard result != -1 else {

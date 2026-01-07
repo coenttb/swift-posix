@@ -10,6 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     internal import Darwin
@@ -23,8 +24,7 @@ extension POSIX.Kernel.Error {
     /// Captures current errno as a `Kernel.Error.Code`.
     ///
     /// Must be called immediately after a failing syscall, before any other libc call.
-    @usableFromInline
-    internal static func captureErrno() -> Kernel.Error.Code {
+    public static func captureErrno() -> Kernel.Error.Code {
         .posix(errno)
     }
 }

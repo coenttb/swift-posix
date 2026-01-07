@@ -26,17 +26,24 @@ let package = Package(
             dependencies: []
         ),
         .target(
+            name: "POSIX Primitives",
+            dependencies: [
+                .product(name: "Kernel Primitives", package: "swift-kernel-primitives")
+            ]
+        ),
+        .target(
             name: "POSIX Kernel",
             dependencies: [
                 .product(name: "Kernel Primitives", package: "swift-kernel-primitives"),
                 .target(name: "CPOSIXProcessShim"),
+                .target(name: "POSIX Primitives"),
             ]
         ),
         .testTarget(
             name: "POSIX Kernel Tests",
             dependencies: [
                 "POSIX Kernel",
-                .product(name: "Kernel Test Support", package: "swift-kernel-primitives"),
+                .product(name: "Kernel Primitives Test Support", package: "swift-kernel-primitives"),
                 .product(name: "StandardsTestSupport", package: "swift-standards")
             ],
             path: "Tests/POSIX Kernel Tests"

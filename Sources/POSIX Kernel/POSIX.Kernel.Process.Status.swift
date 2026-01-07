@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     internal import Darwin
@@ -40,7 +40,7 @@ extension POSIX.Kernel.Process {
     public struct Status: RawRepresentable, Sendable, Equatable, Hashable {
         public let rawValue: Int32
 
-        @inlinable
+    
         public init(rawValue: Int32) {
             self.rawValue = rawValue
         }

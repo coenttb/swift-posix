@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     import Darwin
@@ -33,7 +33,7 @@ extension POSIX.Kernel.Signal.Mask {
     public struct How: RawRepresentable, Sendable, Equatable, Hashable {
         public let rawValue: Int32
 
-        @inlinable
+    
         public init(rawValue: Int32) {
             self.rawValue = rawValue
         }

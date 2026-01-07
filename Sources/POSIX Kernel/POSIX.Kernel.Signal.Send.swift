@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     public import Darwin
@@ -45,7 +45,7 @@ extension POSIX.Kernel.Signal.Send {
     /// // Send SIGTERM to a process
     /// try POSIX.Kernel.Signal.Send.toProcess(.terminate, pid: targetPid)
     /// ```
-    @inlinable
+
     public static func toProcess(
         _ signal: POSIX.Kernel.Signal.Number,
         pid: Kernel.Process.ID
@@ -66,7 +66,7 @@ extension POSIX.Kernel.Signal.Send {
     /// // Send SIGUSR1 to self
     /// try POSIX.Kernel.Signal.Send.toSelf(.user1)
     /// ```
-    @inlinable
+
     public static func toSelf(
         _ signal: POSIX.Kernel.Signal.Number
     ) throws(POSIX.Kernel.Signal.Error) {
@@ -97,7 +97,7 @@ extension POSIX.Kernel.Signal.Send {
     /// // Send SIGTERM to current process group
     /// try POSIX.Kernel.Signal.Send.toGroup(.terminate, pgid: .current)
     /// ```
-    @inlinable
+
     public static func toGroup(
         _ signal: POSIX.Kernel.Signal.Number,
         pgid: POSIX.Kernel.Process.Group.ID

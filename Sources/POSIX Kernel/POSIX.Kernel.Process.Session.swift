@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     public import Darwin
@@ -67,7 +67,7 @@ extension POSIX.Kernel.Process.Session {
     ///     break
     /// }
     /// ```
-    @inlinable
+
     public static func create() throws(POSIX.Kernel.Process.Error) -> ID {
         let result = setsid()
         guard result != -1 else {
@@ -96,7 +96,7 @@ extension POSIX.Kernel.Process.Session {
     /// // Get session ID of another process
     /// let sid = try POSIX.Kernel.Process.Session.id(of: somePid)
     /// ```
-    @inlinable
+
     public static func id(of pid: Kernel.Process.ID) throws(POSIX.Kernel.Process.Error) -> ID {
         let result = getsid(pid.rawValue)
         guard result != -1 else {

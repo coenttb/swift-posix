@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     public import Darwin
@@ -46,13 +46,12 @@ extension POSIX.Kernel.Signal {
     /// defer { _ = try? POSIX.Kernel.Signal.Mask.change(.set, signals: previous) }
     /// ```
     public struct Set: Sendable {
-        @usableFromInline
         internal var storage: sigset_t
 
         /// Creates an empty signal set.
         ///
         /// Equivalent to `sigemptyset()`.
-        @inlinable
+    
         public init() {
             self.storage = sigset_t()
             sigemptyset(&self.storage)
@@ -71,7 +70,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// - Parameter signal: The signal to include.
         /// - Throws: `Error.set` if the signal number is invalid.
-        @inlinable
+    
         public init(_ signal: Number) throws(Error) {
             self.init()
             guard sigaddset(&self.storage, signal.rawValue) == 0 else {
@@ -83,7 +82,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// - Parameter signals: The signals to include.
         /// - Throws: `Error.set` on first invalid signal (deterministic failure point).
-        @inlinable
+    
         public init(_ signals: some Sequence<Number>) throws(Error) {
             self.init()
             for signal in signals {
@@ -101,7 +100,7 @@ extension POSIX.Kernel.Signal {
         /// - Internal construction after validation
         ///
         /// For user-provided signal numbers, use the throwing `init(_:)`.
-        @inlinable
+    
         public init(__unchecked: Void, _ signal: Number) {
             self.init()
             _ = sigaddset(&self.storage, signal.rawValue)
@@ -111,7 +110,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// - Parameter signal: The signal to add.
         /// - Throws: `Error.set` if the signal number is invalid.
-        @inlinable
+    
         public mutating func insert(_ signal: Number) throws(Error) {
             guard sigaddset(&self.storage, signal.rawValue) == 0 else {
                 throw .set(POSIX.Kernel.Error.captureErrno())
@@ -122,7 +121,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// - Parameter signal: The signal to remove.
         /// - Throws: `Error.set` if the signal number is invalid.
-        @inlinable
+    
         public mutating func remove(_ signal: Number) throws(Error) {
             guard sigdelset(&self.storage, signal.rawValue) == 0 else {
                 throw .set(POSIX.Kernel.Error.captureErrno())
@@ -137,7 +136,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// **Design note:** Throwing on error rather than returning `false` prevents
         /// silent failures when checking invalid signal numbers.
-        @inlinable
+    
         public func contains(_ signal: Number) throws(Error) -> Bool {
             var mutableStorage = storage
             let result = sigismember(&mutableStorage, signal.rawValue)
@@ -153,13 +152,11 @@ extension POSIX.Kernel.Signal {
 
 extension POSIX.Kernel.Signal.Set {
     /// Provides read access to the underlying `sigset_t` for syscall interop.
-    @usableFromInline
     internal func withUnsafePointer<R>(_ body: (UnsafePointer<sigset_t>) throws -> R) rethrows -> R {
         try Swift.withUnsafePointer(to: storage, body)
     }
 
     /// Provides mutable access to the underlying `sigset_t` for syscall interop.
-    @usableFromInline
     internal mutating func withUnsafeMutablePointer<R>(_ body: (UnsafeMutablePointer<sigset_t>) throws -> R) rethrows -> R {
         try Swift.withUnsafeMutablePointer(to: &storage, body)
     }
@@ -167,7 +164,6 @@ extension POSIX.Kernel.Signal.Set {
     /// Creates a set from a raw `sigset_t`.
     ///
     /// Used internally when receiving a set from syscalls.
-    @usableFromInline
     internal init(storage: sigset_t) {
         self.storage = storage
     }

@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     public import Darwin
@@ -100,7 +100,6 @@ extension POSIX.Kernel.Signal.Action {
 
 extension POSIX.Kernel.Signal.Action.Handler {
     /// Whether this handler requires the SA_SIGINFO flag.
-    @usableFromInline
     internal var requiresSigInfo: Bool {
         if case .customInfo = self { return true }
         return false

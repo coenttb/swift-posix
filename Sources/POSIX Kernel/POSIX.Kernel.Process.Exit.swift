@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     public import Darwin
@@ -57,7 +57,7 @@ extension POSIX.Kernel.Process.Exit {
     ///     let result = try POSIX.Kernel.Process.Wait.wait(.process(child))
     /// }
     /// ```
-    @inlinable
+
     public static func now(_ status: Int32) -> Never {
         _exit(status)
     }

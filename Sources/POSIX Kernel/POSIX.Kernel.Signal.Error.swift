@@ -10,6 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     internal import Darwin
@@ -50,8 +51,7 @@ extension POSIX.Kernel.Signal.Error {
     /// Creates a signal error from an error code.
     ///
     /// Maps EINTR to `.interrupted`. Returns `nil` for non-signal error codes.
-    @usableFromInline
-    package init?(code: Kernel.Error.Code) {
+    public init?(code: Kernel.Error.Code) {
         guard case .posix(let errno) = code else { return nil }
         switch errno {
         case EINTR:

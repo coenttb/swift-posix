@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     import Darwin
@@ -42,7 +42,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// Prefer named constants when available. Use this initializer
         /// as an escape hatch for platform-specific signals.
-        @inlinable
+    
         public init(rawValue: Int32) {
             self.rawValue = rawValue
         }

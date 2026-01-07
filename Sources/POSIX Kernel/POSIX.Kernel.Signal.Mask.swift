@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     public import Darwin
@@ -46,7 +46,7 @@ extension POSIX.Kernel.Signal.Mask {
     ///
     /// // Critical section where signals are blocked
     /// ```
-    @inlinable
+
     public static func change(
         _ how: How,
         signals: POSIX.Kernel.Signal.Set
@@ -87,7 +87,7 @@ extension POSIX.Kernel.Signal.Mask {
     ///     // SIGINT was raised while blocked
     /// }
     /// ```
-    @inlinable
+
     public static func pending() throws(POSIX.Kernel.Signal.Error) -> POSIX.Kernel.Signal.Set {
         var set = sigset_t()
         sigemptyset(&set)

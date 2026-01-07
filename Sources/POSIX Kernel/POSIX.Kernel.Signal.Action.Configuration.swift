@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 extension POSIX.Kernel.Signal.Action {
     /// Swift representation of signal action configuration.
@@ -72,7 +72,7 @@ extension POSIX.Kernel.Signal.Action {
         ///
         /// - If `handler` is `.customInfo`, `.sigInfo` flag is added automatically.
         /// - If `handler` is `.custom`, `.sigInfo` flag is removed if present.
-        @inlinable
+    
         public init(
             handler: Handler,
             mask: POSIX.Kernel.Signal.Set = POSIX.Kernel.Signal.Set(),
@@ -98,7 +98,6 @@ extension POSIX.Kernel.Signal.Action {
         ///
         /// Used internally when reconstructing from kernel state where
         /// the handler/flags relationship is already correct.
-        @usableFromInline
         internal init(
             __unchecked: Void,
             handler: Handler,

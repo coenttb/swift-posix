@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     public import Darwin
@@ -40,7 +40,7 @@ extension POSIX.Kernel.Signal.Action {
     /// defer { _ = try? POSIX.Kernel.Signal.Action.set(signal: .user1, previous) }
     /// ```
     @discardableResult
-    @inlinable
+
     public static func set(
         signal: POSIX.Kernel.Signal.Number,
         _ configuration: Configuration
@@ -72,7 +72,7 @@ extension POSIX.Kernel.Signal.Action {
     /// case .customInfo: print("Custom handler with siginfo")
     /// }
     /// ```
-    @inlinable
+
     public static func get(
         signal: POSIX.Kernel.Signal.Number
     ) throws(POSIX.Kernel.Signal.Error) -> Configuration {
@@ -90,7 +90,6 @@ extension POSIX.Kernel.Signal.Action {
 
 extension sigaction {
     /// Creates a sigaction struct from a Configuration.
-    @usableFromInline
     internal init(_ configuration: POSIX.Kernel.Signal.Action.Configuration) {
         self.init()
 
@@ -142,7 +141,6 @@ extension sigaction {
 
 extension POSIX.Kernel.Signal.Action.Configuration {
     /// Creates a Configuration from a raw sigaction struct.
-    @usableFromInline
     internal init(_ action: sigaction) {
         let flags = POSIX.Kernel.Signal.Action.Flags(rawValue: action.sa_flags)
         let mask = POSIX.Kernel.Signal.Set(storage: action.sa_mask)

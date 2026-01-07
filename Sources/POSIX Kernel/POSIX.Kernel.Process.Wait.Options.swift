@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     public import Darwin
@@ -38,7 +38,7 @@ extension POSIX.Kernel.Process.Wait {
     public struct Options: OptionSet, Sendable, Hashable {
         public let rawValue: Int32
 
-        @inlinable
+    
         public init(rawValue: Int32) {
             self.rawValue = rawValue
         }
@@ -50,14 +50,14 @@ extension POSIX.Kernel.Process.Wait {
 
         /// No-hang option accessor (Nest.Name pattern).
         public struct No: Sendable {
-            @inlinable
+        
             public init() {}
 
             /// Don't block if no child has exited (WNOHANG).
             ///
             /// When specified, `wait` returns `nil` if no child has
             /// changed state, instead of blocking.
-            @inlinable
+        
             public var hang: Options { Options(rawValue: WNOHANG) }
         }
 

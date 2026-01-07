@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
-
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     public import Darwin
@@ -66,7 +66,7 @@ extension POSIX.Kernel.Process.Wait {
         /// The status of the process.
         public let status: POSIX.Kernel.Process.Status
 
-        @inlinable
+    
         public init(pid: Kernel.Process.ID, status: POSIX.Kernel.Process.Status) {
             self.pid = pid
             self.status = status
@@ -109,7 +109,7 @@ extension POSIX.Kernel.Process.Wait {
     /// // Wait for specific child
     /// let result = try POSIX.Kernel.Process.Wait.wait(.process(childPid))
     /// ```
-    @inlinable
+
     public static func wait(
         _ selector: Selector,
         options: Options = []

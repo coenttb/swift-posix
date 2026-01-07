@@ -10,6 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives
+public import POSIX_Primitives
 
 // MARK: - POSIX-Specific Typed API
 
@@ -18,7 +19,7 @@ extension POSIX.Kernel.Memory.Lock {
     ///
     /// - Parameter flags: Typed flags for mlockall.
     /// - Throws: `Error.lockAll` on failure.
-    @inlinable
+
     public static func lockAll(_ flags: All.Flags) throws(Error) {
         try lockAll(flags: flags.rawValue)
     }
