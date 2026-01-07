@@ -26,7 +26,6 @@ extension POSIX.Kernel.Memory.Lock.All {
     public struct Flags: Sendable, Equatable, Hashable {
         public let rawValue: Int32
 
-    
         public init(rawValue: Int32) {
             self.rawValue = rawValue
         }
@@ -45,16 +44,15 @@ extension POSIX.Kernel.Memory.Lock.All {
         #endif
 
         /// Combines multiple flags.
-    
+
         public static func | (lhs: Flags, rhs: Flags) -> Flags {
             Flags(rawValue: lhs.rawValue | rhs.rawValue)
         }
 
         /// Checks if this contains another flag.
-    
+
         public func contains(_ other: Flags) -> Bool {
             (rawValue & other.rawValue) == other.rawValue
         }
     }
 }
-

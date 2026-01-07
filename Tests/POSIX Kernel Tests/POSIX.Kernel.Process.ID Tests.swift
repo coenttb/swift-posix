@@ -21,7 +21,7 @@
     import Testing
 
     import Kernel_Primitives
-@testable import POSIX_Kernel
+    @testable import POSIX_Kernel
 
     // Note: Kernel.Process.ID already has #TestSuites from elsewhere.
     // We add tests in a separate file to test the .parent accessor.

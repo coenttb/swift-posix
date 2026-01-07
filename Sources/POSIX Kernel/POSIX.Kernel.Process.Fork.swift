@@ -9,7 +9,6 @@
 //
 // ===----------------------------------------------------------------------===//
 
-
 public import Kernel_Primitives
 public import POSIX_Primitives
 
@@ -94,4 +93,3 @@ extension POSIX.Kernel.Process.Fork {
         }
     }
 }
-

@@ -51,7 +51,7 @@ extension POSIX.Kernel.Signal {
         /// Creates an empty signal set.
         ///
         /// Equivalent to `sigemptyset()`.
-    
+
         public init() {
             self.storage = sigset_t()
             sigemptyset(&self.storage)
@@ -70,7 +70,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// - Parameter signal: The signal to include.
         /// - Throws: `Error.set` if the signal number is invalid.
-    
+
         public init(_ signal: Number) throws(Error) {
             self.init()
             guard sigaddset(&self.storage, signal.rawValue) == 0 else {
@@ -82,7 +82,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// - Parameter signals: The signals to include.
         /// - Throws: `Error.set` on first invalid signal (deterministic failure point).
-    
+
         public init(_ signals: some Sequence<Number>) throws(Error) {
             self.init()
             for signal in signals {
@@ -100,7 +100,7 @@ extension POSIX.Kernel.Signal {
         /// - Internal construction after validation
         ///
         /// For user-provided signal numbers, use the throwing `init(_:)`.
-    
+
         public init(__unchecked: Void, _ signal: Number) {
             self.init()
             _ = sigaddset(&self.storage, signal.rawValue)
@@ -110,7 +110,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// - Parameter signal: The signal to add.
         /// - Throws: `Error.set` if the signal number is invalid.
-    
+
         public mutating func insert(_ signal: Number) throws(Error) {
             guard sigaddset(&self.storage, signal.rawValue) == 0 else {
                 throw .set(POSIX.Kernel.Error.captureErrno())
@@ -121,7 +121,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// - Parameter signal: The signal to remove.
         /// - Throws: `Error.set` if the signal number is invalid.
-    
+
         public mutating func remove(_ signal: Number) throws(Error) {
             guard sigdelset(&self.storage, signal.rawValue) == 0 else {
                 throw .set(POSIX.Kernel.Error.captureErrno())
@@ -136,7 +136,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// **Design note:** Throwing on error rather than returning `false` prevents
         /// silent failures when checking invalid signal numbers.
-    
+
         public func contains(_ signal: Number) throws(Error) -> Bool {
             var mutableStorage = storage
             let result = sigismember(&mutableStorage, signal.rawValue)
@@ -168,4 +168,3 @@ extension POSIX.Kernel.Signal.Set {
         self.storage = storage
     }
 }
-

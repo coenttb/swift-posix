@@ -16,7 +16,7 @@
     import Testing
 
     import Kernel_Primitives
-@testable import POSIX_Kernel
+    @testable import POSIX_Kernel
 
     extension Kernel.Process.Execute {
         #TestSuites

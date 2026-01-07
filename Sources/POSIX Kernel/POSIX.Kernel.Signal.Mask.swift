@@ -99,4 +99,3 @@ extension POSIX.Kernel.Signal.Mask {
         return POSIX.Kernel.Signal.Set(storage: set)
     }
 }
-

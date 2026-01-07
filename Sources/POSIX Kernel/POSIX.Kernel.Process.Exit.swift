@@ -62,4 +62,3 @@ extension POSIX.Kernel.Process.Exit {
         _exit(status)
     }
 }
-

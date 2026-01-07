@@ -42,7 +42,7 @@ extension POSIX.Kernel.Signal {
         ///
         /// Prefer named constants when available. Use this initializer
         /// as an escape hatch for platform-specific signals.
-    
+
         public init(rawValue: Int32) {
             self.rawValue = rawValue
         }
@@ -232,4 +232,3 @@ extension POSIX.Kernel.Signal.Number: CustomStringConvertible {
         }
     }
 }
-

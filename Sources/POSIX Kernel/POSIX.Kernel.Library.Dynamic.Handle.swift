@@ -9,8 +9,8 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import POSIX_Primitives
 public import Kernel_Primitives
+public import POSIX_Primitives
 
 #if os(Windows)
     public import WinSDK

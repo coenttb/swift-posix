@@ -40,7 +40,6 @@ extension POSIX.Kernel.Process {
     public struct Status: RawRepresentable, Sendable, Equatable, Hashable {
         public let rawValue: Int32
 
-    
         public init(rawValue: Int32) {
             self.rawValue = rawValue
         }
@@ -217,4 +216,3 @@ extension POSIX.Kernel.Process.Status {
         return nil
     }
 }
-

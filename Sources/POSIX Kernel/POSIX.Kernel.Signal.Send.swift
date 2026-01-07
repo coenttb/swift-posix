@@ -108,4 +108,3 @@ extension POSIX.Kernel.Signal.Send {
         }
     }
 }
-

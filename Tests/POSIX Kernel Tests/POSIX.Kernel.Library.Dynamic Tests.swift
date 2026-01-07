@@ -13,8 +13,9 @@ import StandardsTestSupport
 import Testing
 
 @testable import POSIX_Kernel
+
 #if !os(Windows)
-// @testable import Kernel_POSIX  // Not available in primitives package
+    // @testable import Kernel_POSIX  // Not available in primitives package
 #endif
 
 extension POSIX.Kernel.Library.Dynamic {

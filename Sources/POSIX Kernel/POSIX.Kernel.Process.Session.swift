@@ -105,4 +105,3 @@ extension POSIX.Kernel.Process.Session {
         return ID(result)
     }
 }
-

@@ -189,4 +189,3 @@ extension POSIX.Kernel.Signal.Action.Configuration {
         self.init(__unchecked: (), handler: handler, mask: mask, flags: flags)
     }
 }
-

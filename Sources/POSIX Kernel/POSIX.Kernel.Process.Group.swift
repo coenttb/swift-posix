@@ -171,4 +171,3 @@ extension POSIX.Kernel.Process.Group {
         return ID(result)
     }
 }
-

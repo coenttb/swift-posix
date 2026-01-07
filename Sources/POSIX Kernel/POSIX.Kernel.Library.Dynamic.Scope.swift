@@ -9,8 +9,8 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import POSIX_Primitives
 public import Kernel_Primitives
+public import POSIX_Primitives
 
 #if canImport(Darwin)
     internal import Darwin
@@ -93,4 +93,3 @@ extension POSIX.Kernel.Library.Dynamic.Scope {
         }
     }
 }
-

@@ -43,7 +43,6 @@ extension POSIX.Kernel.Signal.Action {
     public struct Flags: OptionSet, Sendable, Equatable, Hashable {
         public let rawValue: Int32
 
-    
         public init(rawValue: Int32) {
             self.rawValue = rawValue
         }
@@ -87,4 +86,3 @@ extension POSIX.Kernel.Signal.Action {
         public static let sigInfo = Self(rawValue: Int32(truncatingIfNeeded: SA_SIGINFO))
     }
 }
-

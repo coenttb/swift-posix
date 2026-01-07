@@ -98,4 +98,3 @@ extension POSIX.Kernel.Process.Execute {
         throw .execute(POSIX.Kernel.Error.captureErrno())
     }
 }
-

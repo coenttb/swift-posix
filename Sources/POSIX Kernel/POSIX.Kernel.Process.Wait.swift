@@ -66,7 +66,6 @@ extension POSIX.Kernel.Process.Wait {
         /// The status of the process.
         public let status: POSIX.Kernel.Process.Status
 
-    
         public init(pid: Kernel.Process.ID, status: POSIX.Kernel.Process.Status) {
             self.pid = pid
             self.status = status
@@ -144,4 +143,3 @@ extension POSIX.Kernel.Process.Wait {
         )
     }
 }
-

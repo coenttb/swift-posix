@@ -105,4 +105,3 @@ extension POSIX.Kernel.Signal.Action.Handler {
         return false
     }
 }
-

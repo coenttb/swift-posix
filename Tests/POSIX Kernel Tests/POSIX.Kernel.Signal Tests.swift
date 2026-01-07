@@ -9,10 +9,10 @@
 //
 // ===----------------------------------------------------------------------===//
 
+import Kernel_Primitives
 import StandardsTestSupport
 import Testing
 
-import Kernel_Primitives
 @testable import POSIX_Kernel
 
 extension Kernel.Signal {
@@ -37,9 +37,9 @@ extension Kernel.Signal.Test.Unit {
 
 extension Kernel.Signal.Test.Unit {
     #if canImport(Darwin) || canImport(Glibc) || canImport(Musl)
-    @Test("Signal.Error type exists")
-    func errorTypeExists() {
-        let _: Kernel.Signal.Error.Type = Kernel.Signal.Error.self
-    }
+        @Test("Signal.Error type exists")
+        func errorTypeExists() {
+            let _: Kernel.Signal.Error.Type = Kernel.Signal.Error.self
+        }
     #endif
 }

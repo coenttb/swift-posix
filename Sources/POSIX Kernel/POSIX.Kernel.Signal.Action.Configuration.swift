@@ -72,7 +72,7 @@ extension POSIX.Kernel.Signal.Action {
         ///
         /// - If `handler` is `.customInfo`, `.sigInfo` flag is added automatically.
         /// - If `handler` is `.custom`, `.sigInfo` flag is removed if present.
-    
+
         public init(
             handler: Handler,
             mask: POSIX.Kernel.Signal.Set = POSIX.Kernel.Signal.Set(),
@@ -110,4 +110,3 @@ extension POSIX.Kernel.Signal.Action {
         }
     }
 }
-
