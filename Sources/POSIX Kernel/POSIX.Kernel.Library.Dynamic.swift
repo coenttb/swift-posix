@@ -9,7 +9,8 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import Kernel_Primitives
+public import POSIX_Primitives
+public import Kernel_Primitives
 
 extension POSIX.Kernel.Library {
     /// Dynamic library loading operations.
@@ -39,7 +40,7 @@ extension POSIX.Kernel.Library {
 
     public import WinSDK
 
-    extension POSIX.POSIX.Kernel.Library.Dynamic {
+    extension POSIX.Kernel.Library.Dynamic {
         /// Opens a dynamic library (Windows).
         ///
         /// - Parameter path: Path to the DLL (UTF-16, null-terminated).
@@ -103,7 +104,7 @@ extension POSIX.Kernel.Library {
 
     // MARK: - Windows Error Capture
 
-    extension POSIX.POSIX.Kernel.Library.Dynamic {
+    extension POSIX.Kernel.Library.Dynamic {
         /// Captures GetLastError + FormatMessage into owned message.
         ///
         /// MUST be called immediately after a failing syscall (I1.5).
@@ -130,7 +131,7 @@ extension POSIX.Kernel.Library {
         public import Musl
     #endif
 
-    extension POSIX.POSIX.Kernel.Library.Dynamic {
+    extension POSIX.Kernel.Library.Dynamic {
         /// Opens a dynamic library.
         ///
         /// - Parameters:
@@ -198,7 +199,7 @@ extension POSIX.Kernel.Library {
 
     // MARK: - POSIX Error Capture
 
-    extension POSIX.POSIX.Kernel.Library.Dynamic {
+    extension POSIX.Kernel.Library.Dynamic {
         /// Captures dlerror() into an owned message.
         @usableFromInline
         internal static func captureError() -> Message {

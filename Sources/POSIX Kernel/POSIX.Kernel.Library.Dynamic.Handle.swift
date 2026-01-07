@@ -9,13 +9,14 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import Kernel_Primitives
+public import POSIX_Primitives
+public import Kernel_Primitives
 
 #if os(Windows)
     public import WinSDK
 #endif
 
-extension POSIX.POSIX.Kernel.Library.Dynamic {
+extension POSIX.Kernel.Library.Dynamic {
     /// Opaque handle to a loaded dynamic library.
     ///
     /// Returned by `open`, consumed by `close`. This type represents

@@ -9,7 +9,8 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import Kernel_Primitives
+public import POSIX_Primitives
+public import Kernel_Primitives
 
 #if canImport(Darwin)
     internal import Darwin
@@ -20,7 +21,7 @@ internal import Kernel_Primitives
     internal import Musl
 #endif
 
-extension POSIX.POSIX.Kernel.Library.Dynamic {
+extension POSIX.Kernel.Library.Dynamic {
     /// Options for loading dynamic libraries.
     ///
     /// Maps to RTLD_* flags on POSIX.
@@ -38,7 +39,7 @@ extension POSIX.POSIX.Kernel.Library.Dynamic {
 
 #if canImport(Darwin) || canImport(Glibc) || canImport(Musl)
 
-    extension POSIX.POSIX.Kernel.Library.Dynamic.Options {
+    extension POSIX.Kernel.Library.Dynamic.Options {
         /// Resolve symbols lazily (RTLD_LAZY).
         ///
         /// Defers symbol resolution until first use; may hide errors
@@ -69,7 +70,7 @@ extension POSIX.POSIX.Kernel.Library.Dynamic {
 
 #if canImport(Darwin)
 
-    extension POSIX.POSIX.Kernel.Library.Dynamic.Options {
+    extension POSIX.Kernel.Library.Dynamic.Options {
         /// Don't load, just check if loadable (RTLD_NOLOAD).
         ///
         /// Returns the handle if the library is already loaded,

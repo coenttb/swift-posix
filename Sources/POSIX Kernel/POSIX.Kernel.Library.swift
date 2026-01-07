@@ -9,6 +9,8 @@
 //
 // ===----------------------------------------------------------------------===//
 
+public import POSIX_Primitives
+
 extension POSIX.Kernel {
     /// Library loading domain.
     public enum Library {}

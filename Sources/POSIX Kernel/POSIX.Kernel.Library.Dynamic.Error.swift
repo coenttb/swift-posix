@@ -9,9 +9,10 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import Kernel_Primitives
+public import POSIX_Primitives
+public import Kernel_Primitives
 
-extension POSIX.POSIX.Kernel.Library.Dynamic {
+extension POSIX.Kernel.Library.Dynamic {
     /// Errors from dynamic library syscalls.
     ///
     /// Unlike most kernel errors, these carry the platform's
@@ -29,7 +30,7 @@ extension POSIX.POSIX.Kernel.Library.Dynamic {
     }
 }
 
-extension POSIX.POSIX.Kernel.Library.Dynamic {
+extension POSIX.Kernel.Library.Dynamic {
     /// An owned error message from the platform.
     ///
     /// Always contains a human-readable `text` (never empty).
@@ -54,7 +55,7 @@ extension POSIX.POSIX.Kernel.Library.Dynamic {
 
 // MARK: - CustomStringConvertible
 
-extension POSIX.POSIX.Kernel.Library.Dynamic.Error: CustomStringConvertible {
+extension POSIX.Kernel.Library.Dynamic.Error: CustomStringConvertible {
     public var description: String {
         switch self {
         case .open(let msg):
@@ -67,6 +68,6 @@ extension POSIX.POSIX.Kernel.Library.Dynamic.Error: CustomStringConvertible {
     }
 }
 
-extension POSIX.POSIX.Kernel.Library.Dynamic.Message: CustomStringConvertible {
+extension POSIX.Kernel.Library.Dynamic.Message: CustomStringConvertible {
     public var description: String { text }
 }

@@ -9,7 +9,8 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import Kernel_Primitives
+public import POSIX_Primitives
+public import Kernel_Primitives
 
 #if canImport(Darwin)
     internal import Darwin
@@ -23,7 +24,7 @@ internal import Kernel_Primitives
     internal import CPosixShim
 #endif
 
-extension POSIX.POSIX.Kernel.Library.Dynamic {
+extension POSIX.Kernel.Library.Dynamic {
     /// Lookup scope for symbol resolution.
     ///
     /// Used with `symbol(name:in:)` to specify where to search.
@@ -71,7 +72,7 @@ extension POSIX.POSIX.Kernel.Library.Dynamic {
 
 // MARK: - Internal Conversion
 
-extension POSIX.POSIX.Kernel.Library.Dynamic.Scope {
+extension POSIX.Kernel.Library.Dynamic.Scope {
     /// Converts scope to dlsym handle pointer.
     ///
     /// Uses platform constants from dlfcn.h via C shims.
