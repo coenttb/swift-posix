@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import Kernel_Primitives
+public import Kernel_Primitives
 
 extension POSIX {
     /// POSIX kernel mechanisms.
