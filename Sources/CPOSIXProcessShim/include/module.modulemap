@@ -1,0 +1,4 @@
+module CPOSIXProcessShim {
+    header "shim.h"
+    export *
+}
