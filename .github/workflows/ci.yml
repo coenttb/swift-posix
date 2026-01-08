@@ -32,8 +32,7 @@ jobs:
         with:
           path: .build
           key: macos-swift62-spm-v5-${{ hashFiles('Package.swift', 'Package@*.swift') }}
-          restore-keys: |
-            macos-swift62-spm-
+          restore-keys: macos-swift62-spm-v5-
 
       # Note: swift test builds automatically, no separate build step needed
       - name: Test
@@ -70,7 +69,7 @@ jobs:
         with:
           path: .build
           key: linux-swift62-spm-v5-${{ hashFiles('Package.swift', 'Package@*.swift') }}
-          restore-keys: linux-swift62-spm-
+          restore-keys: linux-swift62-spm-v5-
 
       # Note: swift test builds automatically in release mode
       - name: Test (release)
@@ -90,7 +89,7 @@ jobs:
         with:
           path: .build
           key: linux-swift62-compat-spm-v5-${{ hashFiles('Package.swift', 'Package@*.swift') }}
-          restore-keys: linux-swift62-compat-spm-
+          restore-keys: linux-swift62-compat-spm-v5-
 
       # Note: swift test builds automatically
       - name: Test (Swift 6.2)
