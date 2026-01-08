@@ -22,6 +22,15 @@ public import POSIX_Primitives
 
 extension POSIX.Kernel.Process {
     /// Wait operations namespace.
+    ///
+    /// ## Threading
+    ///
+    /// `waitpid` is thread-safe (kernel provides synchronization).
+    ///
+    /// ## Blocking Behavior
+    ///
+    /// `wait` blocks until a child changes state, unless `Options.no.hang` is set.
+    /// When blocking, the thread is suspended in a kernel wait queue.
     public enum Wait {}
 }
 

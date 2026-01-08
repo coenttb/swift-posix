@@ -22,6 +22,14 @@ public import POSIX_Primitives
 
 extension POSIX.Kernel.Process {
     /// Session operations namespace.
+    ///
+    /// ## Threading
+    ///
+    /// Session operations are thread-safe (kernel provides synchronization).
+    ///
+    /// ## Blocking Behavior
+    ///
+    /// Operations are synchronous and non-blocking.
     public enum Session {}
 }
 

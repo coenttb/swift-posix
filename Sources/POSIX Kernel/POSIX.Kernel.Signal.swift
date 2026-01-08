@@ -21,6 +21,22 @@ extension POSIX.Kernel {
     /// - Signal actions (sigaction)
     /// - Signal sending (kill, raise)
     ///
+    /// ## Threading
+    ///
+    /// All signal operations are thread-safe (kernel provides synchronization).
+    /// Signal masks are per-thread; use `pthread_sigmask` (wrapped by `Signal.Mask`)
+    /// rather than `sigprocmask` for multithreaded programs.
+    ///
+    /// ## Blocking Behavior
+    ///
+    /// Operations are synchronous and non-blocking (immediate kernel calls).
+    /// No operation in this namespace waits for signals to arrive.
+    ///
+    /// ## Cancellation
+    ///
+    /// POSIX signal syscalls are not cancellable. EINTR is returned as
+    /// `Signal.Error.interrupted` for caller-determined retry policy.
+    ///
     /// ## Design
     ///
     /// POSIX.Kernel does NOT automatically retry on EINTR. Higher layers

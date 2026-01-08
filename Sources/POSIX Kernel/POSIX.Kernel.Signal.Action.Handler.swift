@@ -22,6 +22,15 @@ public import POSIX_Primitives
 
 extension POSIX.Kernel.Signal {
     /// Signal action operations namespace.
+    ///
+    /// ## Threading
+    ///
+    /// `sigaction` is thread-safe (kernel provides synchronization).
+    /// Signal actions are process-wide, not per-thread.
+    ///
+    /// ## Blocking Behavior
+    ///
+    /// Operations are synchronous and non-blocking.
     public enum Action {}
 }
 
