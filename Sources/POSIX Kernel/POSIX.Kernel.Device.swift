@@ -85,7 +85,7 @@ extension POSIX.Kernel.Device {
 
 // MARK: - CustomStringConvertible
 
-extension POSIX.Kernel.Device: CustomStringConvertible {
+extension POSIX.Kernel.Device: @retroactive CustomStringConvertible {
     /// Returns "major:minor" format for POSIX device IDs.
     public var description: String {
         "\(major):\(minor)"
