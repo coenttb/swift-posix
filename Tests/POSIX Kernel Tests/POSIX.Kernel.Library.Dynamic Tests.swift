@@ -71,7 +71,7 @@ extension POSIX.Kernel.Library.Dynamic.Test.Unit {
 
         @Test("Opening nonexistent library throws with message")
         func openNonexistentLibraryThrows() {
-            "/nonexistent/library.so".withCString { path in
+            _ = "/nonexistent/library.so".withCString { path in
                 #expect(throws: POSIX.Kernel.Library.Dynamic.Error.self) {
                     _ = try POSIX.Kernel.Library.Dynamic.open(path: path, options: .now)
                 }
@@ -98,7 +98,7 @@ extension POSIX.Kernel.Library.Dynamic.Test.Unit {
 
         @Test("Symbol not found throws with message")
         func symbolNotFoundThrows() {
-            "____nonexistent_symbol_xyz____".withCString { name in
+            _ = "____nonexistent_symbol_xyz____".withCString { name in
                 #expect(throws: POSIX.Kernel.Library.Dynamic.Error.self) {
                     _ = try POSIX.Kernel.Library.Dynamic.symbol(name: name, in: .default)
                 }

@@ -14,7 +14,7 @@
     import StandardsTestSupport
     import Testing
 
-    public import Kernel_Primitives
+    import Kernel_Primitives
     @testable import POSIX_Kernel
 
     extension Kernel.Process.Wait {
@@ -192,7 +192,7 @@
             do {
                 _ = try Kernel.Process.Wait.wait(.process(child))
                 Issue.record("Expected ECHILD error")
-            } catch let error as Kernel.Process.Error {
+            } catch {
                 #expect(error.semantic == .noSuchProcess)
             }
         }

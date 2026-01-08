@@ -86,16 +86,14 @@
             do {
                 _ = try doSpawn()
                 Issue.record("Expected spawn to throw for invalid path")
-            } catch let error as Kernel.Path.String.Error<POSIX.Kernel.Process.Error> {
+            } catch {
                 // With pass-through overloads, error is single-layer: .body(.spawn(...))
                 guard case .body(.spawn(let code)) = error else {
                     Issue.record("Expected .body(.spawn(...)), got \(error)")
                     return
                 }
                 #expect(code.posix == ENOENT, "Expected ENOENT, got \(code)")
-            } catch {
-                Issue.record("Unexpected error type: \(type(of: error)) - \(error)")
-            }
+            } 
         }
 
         @Test("spawn passes arguments to program")

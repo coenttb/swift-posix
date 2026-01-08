@@ -13,11 +13,11 @@ public import Kernel_Primitives
 public import POSIX_Primitives
 
 #if canImport(Darwin)
-    public import Darwin
+    internal import Darwin
 #elseif canImport(Glibc)
-    public import Glibc
+    internal import Glibc
 #elseif canImport(Musl)
-    public import Musl
+    internal import Musl
 #endif
 
 extension POSIX.Kernel.Process {

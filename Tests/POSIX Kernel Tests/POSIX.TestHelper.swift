@@ -41,56 +41,45 @@ enum POSIXTestHelper {
     ///
     /// Resolution order:
     /// 1. `POSIX_TEST_HELPER` environment variable (CI-friendly)
-    /// 2. Same directory as test binary (SwiftPM layout)
-    /// 3. Parent directories up to Build/Products/Debug (Xcode layout)
-    static var executablePath: String {
-        // 1. Prefer explicit env var
+    /// 2. `.build/debug/` relative to package root via #filePath (SwiftPM)
+    /// 3. Xcode DerivedData via environment variables
+    static func executablePath(filePath: StaticString = #filePath) -> String {
+        let helperName = "posix-test-helper"
+
+        // 1. Prefer explicit env var (CI-friendly)
         if let envPath = getenv("POSIX_TEST_HELPER") {
             return String(cString: envPath)
         }
 
-        let helperName = "posix-test-helper"
+        // 2. Use #filePath to find package root, then .build/debug/
+        //    filePath: .../swift-posix/Tests/POSIX Kernel Tests/POSIX.TestHelper.swift
+        //    package root: .../swift-posix/
+        //    helper: .../swift-posix/.build/debug/posix-test-helper
+        var path = filePath.description
+        // Go up: POSIX.TestHelper.swift -> POSIX Kernel Tests -> Tests -> swift-posix
+        for _ in 0..<3 {
+            if let lastSlash = path.lastIndex(of: "/") {
+                path = String(path[..<lastSlash])
+            }
+        }
+        let swiftPMPath = "\(path)/.build/debug/\(helperName)"
+        if isExecutable(swiftPMPath) {
+            return swiftPMPath
+        }
 
-        // 2. Try __XPC_DYLD_FRAMEWORK_PATH (set by Xcode test runner)
-        //    Format: .../Build/Products/Debug
+        // 3. Try __XPC_DYLD_FRAMEWORK_PATH (set by Xcode test runner)
         if let xpcPath = getenv("__XPC_DYLD_FRAMEWORK_PATH") {
-            let frameworkPath = String(cString: xpcPath)
-            let candidate = "\(frameworkPath)/\(helperName)"
+            let candidate = "\(String(cString: xpcPath))/\(helperName)"
             if isExecutable(candidate) {
                 return candidate
             }
         }
 
-        // 3. Try DYLD_FRAMEWORK_PATH (also set by Xcode)
+        // 4. Try DYLD_FRAMEWORK_PATH (also set by Xcode)
         if let dyldPath = getenv("DYLD_FRAMEWORK_PATH") {
-            let frameworkPath = String(cString: dyldPath)
-            let candidate = "\(frameworkPath)/\(helperName)"
+            let candidate = "\(String(cString: dyldPath))/\(helperName)"
             if isExecutable(candidate) {
                 return candidate
-            }
-        }
-
-        // 4. Try same directory as test binary (SwiftPM layout)
-        let testBinary = CommandLine.arguments[0]
-        if let lastSlash = testBinary.lastIndex(of: "/") {
-            let dir = String(testBinary[..<lastSlash])
-            let sameDir = "\(dir)/\(helperName)"
-            if isExecutable(sameDir) {
-                return sameDir
-            }
-
-            // 5. Try parent directories (Xcode layout fallback)
-            // Test binary is in: .../Build/Products/Debug/X.xctest/Contents/MacOS/X
-            // Helper is in: .../Build/Products/Debug/posix-test-helper
-            var currentDir = dir
-            for _ in 0..<5 {
-                if let parentSlash = currentDir.lastIndex(of: "/") {
-                    currentDir = String(currentDir[..<parentSlash])
-                    let candidate = "\(currentDir)/\(helperName)"
-                    if isExecutable(candidate) {
-                        return candidate
-                    }
-                }
             }
         }
 
@@ -147,7 +136,7 @@ enum POSIXTestHelper {
     /// - Returns: The process ID of the spawned helper.
     /// - Throws: `POSIX.Kernel.Process.Error.spawn` on failure.
     static func spawn(_ args: [String]) throws -> Kernel.Process.ID {
-        let path = executablePath
+        let path = executablePath()
         let allArgs = [path] + args
         let envp: [String] = []
 
