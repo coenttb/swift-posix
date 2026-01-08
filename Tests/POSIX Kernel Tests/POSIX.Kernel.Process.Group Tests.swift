@@ -48,6 +48,9 @@
     }
 
     // MARK: - Integration Tests
+    //
+    // NOTE: These tests use posix_spawn via POSIXTestHelper instead of fork() directly
+    // to avoid Swift runtime lock corruption in multithreaded test environments.
 
     extension Kernel.Process.Group.Test.Integration {
         @Test("getpgid returns current process group")
@@ -58,52 +61,22 @@
             #expect(pgid.rawValue > 0)
         }
 
-        @Test("child can create new process group with .same")
+        @Test("spawned child can create new process group with setpgid(0,0)")
         func childCanCreateGroupWithSame() throws {
-            switch try Kernel.Process.Fork.fork() {
-            case .child:
-                // Use setpgid(0, 0) via .current and .same
-                do {
-                    try Kernel.Process.Group.set(.current, to: .same)
-                    // Verify we're now our own group leader
-                    let ourPID = Kernel.Process.ID.current
-                    let ourPGID = try Kernel.Process.Group.id(of: ourPID)
-                    if ourPGID.rawValue == ourPID.rawValue {
-                        Kernel.Process.Exit.now(0)  // Success
-                    } else {
-                        Kernel.Process.Exit.now(1)  // PGID mismatch
-                    }
-                } catch {
-                    Kernel.Process.Exit.now(2)  // setpgid failed
-                }
-            case .parent(let child):
-                let result = try Kernel.Process.Wait.wait(.process(child))
-                #expect(result?.status.exit.code == 0)
-            }
+            // Spawn helper that calls setpgid(0, 0) and verifies pgid == pid
+            let child = try POSIXTestHelper.spawn("become-group-leader")
+
+            let result = try Kernel.Process.Wait.wait(.process(child))
+            #expect(result?.status.exit.code == 0, "Child should become process group leader")
         }
 
         @Test("setpgid with explicit IDs works")
         func setpgidWithExplicitIDs() throws {
-            switch try Kernel.Process.Fork.fork() {
-            case .child:
-                let ourPID = Kernel.Process.ID.current
-                let targetPGID = Kernel.Process.Group.ID(ourPID.rawValue)
-                do {
-                    try Kernel.Process.Group.set(.id(ourPID), to: .id(targetPGID))
-                    // Verify
-                    let newPGID = try Kernel.Process.Group.id(of: ourPID)
-                    if newPGID == targetPGID {
-                        Kernel.Process.Exit.now(0)
-                    } else {
-                        Kernel.Process.Exit.now(1)
-                    }
-                } catch {
-                    Kernel.Process.Exit.now(2)
-                }
-            case .parent(let child):
-                let result = try Kernel.Process.Wait.wait(.process(child))
-                #expect(result?.status.exit.code == 0)
-            }
+            // Spawn helper that calls setpgid(pid, pid) explicitly
+            let child = try POSIXTestHelper.spawn("setpgid-explicit")
+
+            let result = try Kernel.Process.Wait.wait(.process(child))
+            #expect(result?.status.exit.code == 0, "setpgid with explicit IDs should work")
         }
 
         @Test("getpgid for nonexistent process throws ESRCH")

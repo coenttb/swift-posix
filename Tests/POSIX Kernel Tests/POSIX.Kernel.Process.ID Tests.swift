@@ -11,12 +11,6 @@
 
 #if !os(Windows)
 
-    #if canImport(Darwin)
-        import Darwin
-    #elseif canImport(Glibc)
-        import Glibc
-    #endif
-
     import StandardsTestSupport
     import Testing
 
@@ -27,6 +21,9 @@
     // We add tests in a separate file to test the .parent accessor.
 
     // MARK: - Parent Accessor Tests
+    //
+    // NOTE: These tests use posix_spawn via POSIXTestHelper instead of fork() directly
+    // to avoid Swift runtime lock corruption in multithreaded test environments.
 
     @Suite("Kernel.Process.ID Parent Tests")
     struct KernelProcessIDParentTests {
@@ -36,53 +33,16 @@
             #expect(parent.rawValue > 0)
         }
 
-        @Test("parent is different from current in child")
-        func parentDifferentFromCurrentInChild() throws {
-            #if os(macOS)
-                switch try Kernel.Process.Fork.fork() {
-                case .child:
-                    let current = Kernel.Process.ID.current
-                    let parent = Kernel.Process.ID.parent
-                    // Parent should be our original test process, not ourselves
-                    if parent != current {
-                        Kernel.Process.Exit.now(0)
-                    } else {
-                        Kernel.Process.Exit.now(1)
-                    }
-                case .parent(let child):
-                    let result = try Kernel.Process.Wait.wait(.process(child))
-                    if let status = result?.status {
-                        if status.signaled, status.terminating.signal?.rawValue == SIGKILL {
-                            return  // Skip - test harness interference
-                        }
-                        #expect(status.exit.code == 0)
-                    }
-                }
-            #endif
-        }
-
-        @Test("child's parent matches parent's current")
-        func childParentMatchesParentCurrent() throws {
+        @Test("spawned child's parent matches spawner's current")
+        func childParentMatchesSpawnerCurrent() throws {
             #if os(macOS)
                 let ourPID = Kernel.Process.ID.current
-                switch try Kernel.Process.Fork.fork() {
-                case .child:
-                    let parent = Kernel.Process.ID.parent
-                    // Child's parent should be the process that forked it
-                    if parent == ourPID {
-                        Kernel.Process.Exit.now(0)
-                    } else {
-                        Kernel.Process.Exit.now(1)
-                    }
-                case .parent(let child):
-                    let result = try Kernel.Process.Wait.wait(.process(child))
-                    if let status = result?.status {
-                        if status.signaled, status.terminating.signal?.rawValue == SIGKILL {
-                            return  // Skip - test harness interference
-                        }
-                        #expect(status.exit.code == 0)
-                    }
-                }
+
+                // Spawn helper that verifies its parent PID matches ours
+                let child = try POSIXTestHelper.spawn("verify-parent", "\(ourPID.rawValue)")
+
+                let result = try Kernel.Process.Wait.wait(.process(child))
+                #expect(result?.status.exit.code == 0, "Child's parent should match spawner's PID")
             #endif
         }
     }

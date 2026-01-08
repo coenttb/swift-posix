@@ -39,10 +39,16 @@ let package = Package(
                 .target(name: "POSIX Primitives"),
             ]
         ),
+        .executableTarget(
+            name: "posix-test-helper",
+            dependencies: [],
+            path: "Sources/CPOSIXTestHelper"
+        ),
         .testTarget(
             name: "POSIX Kernel Tests",
             dependencies: [
                 "POSIX Kernel",
+                "posix-test-helper",
                 .product(name: "Kernel Primitives Test Support", package: "swift-kernel-primitives"),
                 .product(name: "StandardsTestSupport", package: "swift-standards")
             ],

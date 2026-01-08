@@ -14,7 +14,7 @@
     import StandardsTestSupport
     import Testing
 
-    import Kernel_Primitives
+    public import Kernel_Primitives
     @testable import POSIX_Kernel
 
     extension Kernel.Process.Wait {
@@ -22,7 +22,7 @@
     }
 
     extension Kernel.Process.Wait.Test {
-        @Suite(.serialized) struct Integration {}
+        @Suite struct Integration {}
     }
 
     // MARK: - Selector Tests
@@ -116,79 +116,98 @@
     }
 
     // MARK: - Integration Tests
+    //
+    // NOTE: These tests use posix_spawn via POSIXTestHelper instead of fork() directly
+    // to avoid Swift runtime lock corruption in multithreaded test environments.
 
     extension Kernel.Process.Wait.Test.Integration {
-        @Test("wait(.any) collects child status")
-        func waitAnyCollectsChild() throws {
-            switch try Kernel.Process.Fork.fork() {
-            case .child:
-                Kernel.Process.Exit.now(99)
-            case .parent(let childPID):
-                let result = try Kernel.Process.Wait.wait(.any)
-                #expect(result != nil)
-                #expect(result?.pid == childPID)
-                #expect(result?.status.exit.code == 99)
-            }
+        @Test("wait(.process) collects specific child status")
+        func waitProcessCollectsChild() throws {
+            // Spawn helper that exits with code 99
+            let childPID = try POSIXTestHelper.spawn("exit", "99")
+
+            // Use .process(childPID) instead of .any for determinism
+            let result = try Kernel.Process.Wait.wait(.process(childPID))
+            #expect(result != nil)
+            #expect(result?.pid == childPID)
+            #expect(result?.status.exit.code == 99)
         }
 
         @Test("wait(.process(id)) waits for specific child")
         func waitProcessSpecific() throws {
-            switch try Kernel.Process.Fork.fork() {
-            case .child:
-                Kernel.Process.Exit.now(77)
-            case .parent(let child):
-                let result = try Kernel.Process.Wait.wait(.process(child))
-                #expect(result?.pid == child)
-                #expect(result?.status.exit.code == 77)
-            }
+            // Spawn helper that exits with code 77
+            let child = try POSIXTestHelper.spawn("exit", "77")
+
+            let result = try Kernel.Process.Wait.wait(.process(child))
+            #expect(result?.pid == child)
+            #expect(result?.status.exit.code == 77)
         }
 
-        @Test("wait with no.hang returns nil when no child ready")
-        func waitNoHangReturnsNil() throws {
-            // No children to wait for
-            do {
-                let result = try Kernel.Process.Wait.wait(.any, options: .no.hang)
-                // Either nil or ECHILD error
-                #expect(result == nil)
-            } catch {
-                // ECHILD is expected when no children exist
-                #expect(error.semantic == .noSuchProcess)
-            }
+        @Test("wait with no.hang returns nil when child exists but is not reportable")
+        func waitNoHangReturnsNilWhenStopped() throws {
+            // Deterministic test using SIGSTOP/WUNTRACED:
+            // 1. Child self-stops with SIGSTOP (deterministic "not exited" state)
+            // 2. Parent confirms stop via WUNTRACED (blocking, deterministic)
+            // 3. WNOHANG without WUNTRACED must return nil (child stopped, not exited)
+            // 4. Parent continues child with SIGCONT
+            // 5. Parent reaps exited child
+
+            // Spawn helper that stops itself, then exits with code 42 when continued
+            let child = try POSIXTestHelper.spawn("stop-exit", "42")
+
+            // Deterministically observe stopped state
+            let stopped = try Kernel.Process.Wait.wait(
+                .process(child),
+                options: [.untraced]
+            )
+            #expect(stopped?.pid == child, "Should observe child stop")
+
+            // Child exists but is stopped (not exited); WNOHANG must return nil
+            // Note: .no.hang without .untraced means stopped state is not reportable
+            let noHang = try Kernel.Process.Wait.wait(
+                .process(child),
+                options: [.no.hang]
+            )
+            #expect(noHang == nil, "WNOHANG should return nil for stopped (non-reportable) child")
+
+            // Resume child so it can exit
+            try POSIX.Kernel.Signal.Send.toProcess(.continue, pid: child)
+
+            // Reap exited child
+            let exited = try Kernel.Process.Wait.wait(.process(child))
+            #expect(exited?.pid == child)
+            #expect(exited?.status.exit.code == 42)
         }
 
         @Test("ECHILD when no children exist")
         func echldWhenNoChildren() throws {
-            // Fork a child that exits immediately, then wait for it
+            // Spawn a child that exits immediately, then wait for it
             // After that, waiting again should give ECHILD
-            switch try Kernel.Process.Fork.fork() {
-            case .child:
-                Kernel.Process.Exit.now(0)
-            case .parent(let child):
-                // First collect the child
+            let child = try POSIXTestHelper.spawn("exit", "0")
+
+            // First collect the child
+            _ = try Kernel.Process.Wait.wait(.process(child))
+
+            // Now try to wait again - should fail with ECHILD
+            do {
                 _ = try Kernel.Process.Wait.wait(.process(child))
-                // Now try to wait again - should fail with ECHILD
-                do {
-                    _ = try Kernel.Process.Wait.wait(.process(child))
-                    Issue.record("Expected ECHILD error")
-                } catch let error as Kernel.Process.Error {
-                    #expect(error.semantic == .noSuchProcess)
-                }
+                Issue.record("Expected ECHILD error")
+            } catch let error as Kernel.Process.Error {
+                #expect(error.semantic == .noSuchProcess)
             }
         }
 
         @Test("status classification matches exited")
         func statusClassificationExited() throws {
-            switch try Kernel.Process.Fork.fork() {
-            case .child:
-                Kernel.Process.Exit.now(55)
-            case .parent(let child):
-                let result = try Kernel.Process.Wait.wait(.process(child))
-                #expect(result != nil)
-                if case .exited(let code) = result?.status.classification {
-                    #expect(code == 55)
-                } else {
-                    Issue.record("Expected .exited classification")
-                }
+            // Spawn helper that exits with code 55
+            let child = try POSIXTestHelper.spawn("exit", "55")
+
+            let result = try Kernel.Process.Wait.wait(.process(child))
+            #expect(result != nil)
+            if case .exited(let code) = result?.status.classification {
+                #expect(code == 55)
+            } else {
+                Issue.record("Expected .exited classification")
             }
         }
     }

@@ -58,47 +58,43 @@
     }
 
     // MARK: - Integration Tests
+    //
+    // NOTE: These tests use posix_spawn via POSIXTestHelper instead of fork() directly
+    // to avoid Swift runtime lock corruption in multithreaded test environments.
 
     extension Kernel.Process.Fork.Test.Integration {
-        @Test("fork creates child process that can exit")
-        func forkAndExit() throws {
-            switch try Kernel.Process.Fork.fork() {
-            case .child:
-                // In child: exit immediately with code 42
-                Kernel.Process.Exit.now(42)
-            case .parent(let child):
-                // In parent: wait for child and verify exit code
-                let result = try Kernel.Process.Wait.wait(.process(child))
-                #expect(result != nil)
-                #expect(result?.pid == child)
-                #expect(result?.status.exited == true)
-                #expect(result?.status.exit.code == 42)
-            }
+        @Test("spawned child process can exit with code")
+        func spawnAndExit() throws {
+            // Spawn helper that exits with code 42
+            let child = try POSIXTestHelper.spawn("exit", "42")
+
+            // Wait for child and verify exit code
+            let result = try Kernel.Process.Wait.wait(.process(child))
+            #expect(result != nil)
+            #expect(result?.pid == child)
+            #expect(result?.status.exited == true)
+            #expect(result?.status.exit.code == 42)
         }
 
-        @Test("fork returns different results in parent and child")
-        func forkResultsCorrect() throws {
-            switch try Kernel.Process.Fork.fork() {
-            case .child:
-                // If we're here, we're in the child - exit 0 to signal success
-                Kernel.Process.Exit.now(0)
-            case .parent(let child):
-                // Child PID must be positive
-                #expect(child.rawValue > 0)
-                // Clean up
-                _ = try? Kernel.Process.Wait.wait(.process(child))
-            }
+        @Test("spawned child PID is positive")
+        func spawnedPIDIsPositive() throws {
+            // Spawn helper that exits with code 0
+            let child = try POSIXTestHelper.spawn("exit", "0")
+
+            // Child PID must be positive
+            #expect(child.rawValue > 0)
+
+            // Clean up
+            _ = try? Kernel.Process.Wait.wait(.process(child))
         }
 
         @Test("child PID matches wait result PID")
         func childPIDConsistent() throws {
-            switch try Kernel.Process.Fork.fork() {
-            case .child:
-                Kernel.Process.Exit.now(0)
-            case .parent(let child):
-                let result = try Kernel.Process.Wait.wait(.process(child))
-                #expect(result?.pid == child)
-            }
+            // Spawn helper that exits with code 0
+            let child = try POSIXTestHelper.spawn("exit", "0")
+
+            let result = try Kernel.Process.Wait.wait(.process(child))
+            #expect(result?.pid == child)
         }
     }
 
