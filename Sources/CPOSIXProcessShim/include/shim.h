@@ -73,6 +73,22 @@ static inline int swift_execve(
     return execve(path, (char *const *)argv, (char *const *)envp);
 }
 
+// posix_spawn wrapper - similar to execve, expects const pointers.
+// posix_spawn does NOT modify the strings, this is safe.
+
+#include <spawn.h>
+
+static inline int swift_posix_spawn(
+    pid_t *pid,
+    const char *path,
+    const posix_spawn_file_actions_t *file_actions,
+    const posix_spawnattr_t *attrp,
+    const char *const argv[],
+    const char *const envp[]
+) {
+    return posix_spawn(pid, path, file_actions, attrp, (char *const *)argv, (char *const *)envp);
+}
+
 #endif /* __APPLE__ || __linux__ */
 
 #endif /* CPOSIX_PROCESS_SHIM_H */

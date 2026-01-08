@@ -35,11 +35,17 @@ extension POSIX.Kernel.Process {
         /// wait*() failed.
         case wait(Kernel.Error.Code)
 
+        /// kill() failed.
+        case kill(Kernel.Error.Code)
+
         /// Session operation failed (setsid, getsid).
         case session(Kernel.Error.Code)
 
         /// Process group operation failed (setpgid, getpgid).
         case group(Kernel.Error.Code)
+
+        /// posix_spawn() failed.
+        case spawn(Kernel.Error.Code)
     }
 }
 
@@ -49,8 +55,8 @@ extension POSIX.Kernel.Process.Error {
     /// The underlying error code.
     public var code: Kernel.Error.Code {
         switch self {
-        case .fork(let c), .execute(let c), .wait(let c),
-            .session(let c), .group(let c):
+        case .fork(let c), .execute(let c), .wait(let c), .kill(let c),
+            .session(let c), .group(let c), .spawn(let c):
             return c
         }
     }
@@ -113,10 +119,14 @@ extension POSIX.Kernel.Process.Error: CustomStringConvertible {
             return "execute failed: \(code)"
         case .wait(let code):
             return "wait failed: \(code)"
+        case .kill(let code):
+            return "kill failed: \(code)"
         case .session(let code):
             return "session operation failed: \(code)"
         case .group(let code):
             return "process group operation failed: \(code)"
+        case .spawn(let code):
+            return "spawn failed: \(code)"
         }
     }
 }
