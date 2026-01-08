@@ -29,7 +29,7 @@ let package = Package(
             name: "POSIX Kernel",
             dependencies: [
                 .product(name: "Kernel Primitives", package: "swift-kernel-primitives"),
-                .target(name: "CPOSIXProcessShim"),
+                .target(name: "CPOSIXProcessShim", condition: .when(platforms: [.macOS, .iOS, .tvOS, .watchOS, .visionOS, .linux])),
                 .target(name: "POSIX Primitives"),
             ]
         ),
