@@ -93,7 +93,7 @@
                     return
                 }
                 #expect(code.posix == ENOENT, "Expected ENOENT, got \(code)")
-            } 
+            }
         }
 
         @Test("spawn passes arguments to program")
