@@ -11,7 +11,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/coenttb/swift-kernel-primitives.git", from: "0.2.0"),
+        .package(url: "https://github.com/coenttb/swift-kernel-primitives.git", from: "0.2.1"),
         .package(url: "https://github.com/swift-standards/swift-standards.git", from: "0.29.0")
     ],
     targets: [
